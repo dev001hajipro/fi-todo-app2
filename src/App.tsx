@@ -1,6 +1,11 @@
 import { addDoc, collection, deleteDoc, doc, DocumentData, DocumentReference, onSnapshot, QuerySnapshot, setDoc, updateDoc } from 'firebase/firestore';
 import { db } from './Firebase';
 import React, { useEffect, useState } from 'react';
+import { Box, Button, Checkbox, Container, FormControl, FormControlLabel, FormHelperText, Input, InputLabel, Typography } from '@mui/material';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+
+import Copyright from './components/Copyright'
+import SampleForm from './components/SampleForm';
 
 type User = {
   id: string
@@ -10,7 +15,6 @@ type User = {
 }
 
 function App() {
-  const [title, setTitle] = useState<string>('')
   // todo: should change generics type. like a `User[]`
   const [users, setUsers] = useState<any[]>([])
 
@@ -22,9 +26,6 @@ function App() {
     return unsubscribe
   }, [])
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setTitle(e.target.value)
-  }
 
   // todo: learn react-hook-form.
   const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
@@ -47,25 +48,11 @@ function App() {
     }
   }
 
-  const handleButton = async () => {
-    try {
-      // if you set custom Id
-      const docRef: DocumentReference<DocumentData> = doc(db, 'users', 'XXXXXABC')
-      const pm = await setDoc(docRef, {
-        name: 'by setDoc',
-        email: 'sss@ggg.com',
-        active: true
-      })
-    } catch (e) {
-      console.log("Error setDoc document: ", e)
-    }
-  }
-
   const handleDelete = async (id: string) => {
     await deleteDoc(doc(db, 'users', id))
   }
 
-  const handleActive = async (e: React.ChangeEvent<HTMLInputElement>, id:string) => {
+  const handleActive = async (e: React.ChangeEvent<HTMLInputElement>, id: string) => {
     console.log(e.target.checked, id)
     const docRef = doc(db, 'users', id)
     await updateDoc(docRef, {
@@ -74,51 +61,52 @@ function App() {
   }
 
   return (
-    <div>
-      <div>
-        <label>サンプルフォーム:
-          <input type="text" onChange={handleChange} name="xx" placeholder='ダミー'></input>
-        </label>
-      </div>
+    <Container maxWidth="sm">
+      <Box sx={{ my: 4 }}>
+        <Typography variant='h1' component='h1' gutterBottom align="center">
+          Todo app
+        </Typography>
 
-      <div>
-        <label>setDoc is use auto generated Id</label>
-        <button type="button" onClick={handleButton}>use setDoc</button>
-      </div>
+        <Box component="form" noValidate onSubmit={handleSubmit}>
+          <FormControl margin="normal" required fullWidth>
+            <InputLabel htmlFor="name">名前</InputLabel>
+            <Input id="name" name='name' aria-describedby='my-helper-name' />
+            <FormHelperText id="my-helper-name">名前を入力してください。</FormHelperText>
+          </FormControl>
+          <FormControl margin="normal" required fullWidth>
+            <InputLabel htmlFor="email">メール</InputLabel>
+            <Input id="email" name='email' aria-describedby='my-helper-email' />
+            <FormHelperText id="my-helper-email">メールを入力してください。</FormHelperText>
+          </FormControl>
+          <FormControlLabel control={<Checkbox name='active' />} label="活動中" />
 
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>名前:
-            <input type="text" name="name" placeholder='名前' title="名前"></input>
-          </label>
-        </div>
-        <div>
-          <label>メール:
-            <input type="email" name="email" placeholder='メール' title="メール"></input>
-          </label>
-        </div>
-        <div>
-          <label>活動中:
-            <input type="checkbox" name="active"></input>
-          </label>
-        </div>
-        <button type="submit">submit</button>
-      </form>
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            sx={{ mt: 3, mb: 2 }}
+          >送信
+          </Button>
+        </Box>
 
-      <div>
-        {
-          users.map(user => {
-            return (
-              <div key={user.id}>
-                <span>{user.id} {user.name} {user.email}</span>
+        <Box sx={{ my: 4 }}>
+            <div>
+              {
+                users.map(user => {
+                  return (
+                    <div key={user.id}>
+                      <span>{user.id} {user.name} {user.email}</span>
 
-                <input type="checkbox" name="active" defaultChecked={user.active} title="is active" onChange={(e)=> handleActive(e, user.id)}></input>
-                <button type="button" onClick={() => handleDelete(user.id)}>delete</button>
-              </div>)
-          })
-        }
-      </div>
-    </div>
+                      <input type="checkbox" name="active" defaultChecked={user.active} title="is active" onChange={(e) => handleActive(e, user.id)}></input>
+                      <button type="button" onClick={() => handleDelete(user.id)}>delete</button>
+                    </div>)
+                })
+              }
+            </div>
+        </Box>
+        <Copyright message="hello"></Copyright>
+      </Box>
+    </Container >
   );
 }
 
