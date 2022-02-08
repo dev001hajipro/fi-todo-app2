@@ -7,25 +7,30 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import Copyright from './components/Copyright'
 import SampleForm from './components/SampleForm';
 
-type User = {
-  id: string
-  name: string
-  email: string
-  active: boolean
-}
+import { User } from './components/User';
+import TodoList from './components/TodoList';
+
+// todo: <TodoList>を分離したら描画できなくなった。
+// 1. 最初に作った永続化せず、かつFirebaseを使わないTodoAppでは、TodoListに引数で渡して
+//    描画できた。
+// 2. このTodoAppでApp.tsxファイル1ファイルのみで実装したリストは描画できていたが、
+//    TodoList.tsx,TodoItem.tsxを使いかつFirestoreを使ったら描画できなくなった。
+//
+// 上記より、React+TypeScript+FireStoreでファイルをApp.tsx,TodoList.tsx,TodoItem.tsx
+// に分割したサンプルを一度探してみるとよい。
+// 
 
 function App() {
+
   // todo: should change generics type. like a `User[]`
   const [users, setUsers] = useState<any[]>([])
 
   useEffect(() => {
-    const re = collection(db, 'users')
     const unsubscribe = onSnapshot(collection(db, 'users'), (querySnapShot: QuerySnapshot) => {
       setUsers(querySnapShot.docs.map(v => ({ ...v.data(), id: v.id })))
     })
     return unsubscribe
   }, [])
-
 
   // todo: learn react-hook-form.
   const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
@@ -89,21 +94,9 @@ function App() {
           </Button>
         </Box>
 
-        <Box sx={{ my: 4 }}>
-            <div>
-              {
-                users.map(user => {
-                  return (
-                    <div key={user.id}>
-                      <span>{user.id} {user.name} {user.email}</span>
+        <TodoList users={users} /> 
 
-                      <input type="checkbox" name="active" defaultChecked={user.active} title="is active" onChange={(e) => handleActive(e, user.id)}></input>
-                      <button type="button" onClick={() => handleDelete(user.id)}>delete</button>
-                    </div>)
-                })
-              }
-            </div>
-        </Box>
+
         <Copyright message="hello"></Copyright>
       </Box>
     </Container >
