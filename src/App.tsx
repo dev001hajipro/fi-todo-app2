@@ -27,7 +27,7 @@ function App() {
     }
 
     try {
-      const docRef = await addDoc(collection(db, 'todos'), {
+      await addDoc(collection(db, 'todos'), {
         title: _target.title.value,
         active: _target.active.checked
       })
