@@ -1,39 +1,39 @@
 
-import { addDoc, collection, deleteDoc, doc, DocumentData, DocumentReference, Firestore, onSnapshot, QuerySnapshot, setDoc, updateDoc } from 'firebase/firestore';
+import { List } from "@mui/material";
+import { deleteDoc, doc, updateDoc } from 'firebase/firestore';
+import React from "react";
 import { db } from '../Firebase';
-import { Box, Grid, List } from "@mui/material"
-import React, { useEffect, useState } from "react"
-import { User } from "./User"
+import { Todo } from "./Todo";
 import TodoItem from './TodoItem';
 
 type Props = {
-    users: User[]
+    items: Todo[]
 }
 
-const TodoList: React.FC<Props> = ({ users }) => {
+const TodoList: React.FC<Props> = ({ items }) => {
 
 
-    const handleActive = async (user: User) => {
-        await updateDoc(doc(db, 'users', user.id), {
-            active: !user.active
+    const handleActive = async (todo: Todo) => {
+        await updateDoc(doc(db, 'todos', todo.id), {
+            active: !todo.active
         })
     }
 
     const handleDelete = async (id: string) => {
-        await deleteDoc(doc(db, 'users', id))
+        await deleteDoc(doc(db, 'todos', id))
     }
 
     return (
-        <List sx={{ width:'100%' }}>
-                {
-                    users.map(user =>
-                        <TodoItem
-                            key={user.id}
-                            user={user}
-                            handleActive={handleActive}
-                            handleDelete={handleDelete} />
-                    )
-                }
+        <List sx={{ width: '100%' }}>
+            {
+                items.map(todo =>
+                    <TodoItem
+                        key={todo.id}
+                        todo={todo}
+                        handleActive={handleActive}
+                        handleDelete={handleDelete} />
+                )
+            }
         </List>
     )
 }

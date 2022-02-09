@@ -1,22 +1,22 @@
+import DeleteIcon from "@mui/icons-material/Delete";
 import { Checkbox, IconButton, ListItem, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
 import React from "react";
-import { User } from "./User";
-import DeleteIcon from "@mui/icons-material/Delete"
+import { Todo } from "./Todo";
 
 type Props = {
-    user: User,
-    handleActive: (user: User) => void
+    todo: Todo,
+    handleActive: (todo: Todo) => void
     handleDelete: (id: string) => void
 }
 
-const TodoItem: React.FC<Props> = ({ user, handleActive, handleDelete }) => {
+const TodoItem: React.FC<Props> = ({ todo, handleActive, handleDelete }) => {
     return (
-        <ListItem key={user.id}
+        <ListItem key={todo.id}
             secondaryAction={
                 <IconButton
                     edge="end"
                     aria-label="delete"
-                    onClick={() => handleDelete(user.id)}>
+                    onClick={() => handleDelete(todo.id)}>
                     <DeleteIcon />
                 </IconButton>
             }
@@ -26,13 +26,13 @@ const TodoItem: React.FC<Props> = ({ user, handleActive, handleDelete }) => {
                     <Checkbox
                         edge="start"
                         name="active"
-                        defaultChecked={user.active}
+                        defaultChecked={todo.active}
                         title="is active"
-                        onChange={(e) => handleActive(user)}
+                        onChange={(e) => handleActive(todo)}
                     />
                 </ListItemIcon>
                 <ListItemText
-                    primary={`${user.name} ${user.email}`}>                     
+                    primary={`${todo.title}`}>
                 </ListItemText>
             </ListItemButton>
         </ListItem>
